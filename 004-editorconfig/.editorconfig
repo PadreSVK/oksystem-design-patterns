@@ -1,0 +1,81 @@
+# ============================================================
+# Hands-On 004 — Configure .editorconfig
+#
+# Instructions:
+#   1. Copy this file to the repository root (next to .gitignore)
+#      and rename it to .editorconfig (overwrite if one exists).
+#   2. Complete the TODO sections below — add the two naming rules.
+#   3. Open hands-on/002-solid-refactoring/GodClass.cs and run:
+#        dotnet format --verify-no-changes
+#      Note which violations are reported.
+#   4. Fix the reported formatting violations in GodClass.cs.
+#   5. Run dotnet format --verify-no-changes again — confirm exit 0.
+#
+# Stretch goal:
+#   Uncomment the severity overrides at the bottom of this file,
+#   then run dotnet build and observe the new diagnostics.
+# ============================================================
+
+root = true
+
+[*]
+end_of_line = crlf
+insert_final_newline = true
+
+[*.cs]
+indent_style = space
+indent_size = 4
+charset = utf-8-bom
+trim_trailing_whitespace = true
+
+# -----------------------------------------------
+# TODO Step 2: Add a naming rule for private fields
+#
+# Goal: every private field must be prefixed with _
+#       and use camelCase (e.g. _orderRepository).
+#
+# You need three blocks:
+#
+# 1. The rule — links a symbol group to a style and sets severity
+#    dotnet_naming_rule.<rule_id>.symbols  = <symbol_group_id>
+#    dotnet_naming_rule.<rule_id>.style    = <style_id>
+#    dotnet_naming_rule.<rule_id>.severity = warning
+#
+# 2. The symbol group — what the rule targets
+#    dotnet_naming_symbols.<symbol_group_id>.applicable_kinds           = field
+#    dotnet_naming_symbols.<symbol_group_id>.applicable_accessibilities = private
+#
+# 3. The style — how the name must look
+#    dotnet_naming_style.<style_id>.capitalization  = camel_case
+#    dotnet_naming_style.<style_id>.required_prefix = _
+#
+# Replace <rule_id>, <symbol_group_id>, <style_id> with your own identifiers,
+# e.g. private_fields_rule / private_fields / underscore_camel_case
+# -----------------------------------------------
+
+
+
+# -----------------------------------------------
+# TODO Step 3: Add a naming rule for constants
+#
+# Goal: every constant (const field or local) must use PascalCase
+#       with no prefix (e.g. MaxRetryCount, not MAX_RETRY_COUNT).
+#
+# Additional hint — to target only constants, add:
+#    dotnet_naming_symbols.<id>.required_modifiers = const
+#
+# applicable_accessibilities should be * (all) so it covers
+# private, internal, and public constants.
+# -----------------------------------------------
+
+
+
+# -----------------------------------------------
+# Severity overrides
+# -----------------------------------------------
+dotnet_diagnostic.IDE0055.severity = warning   # Fix formatting
+dotnet_diagnostic.IDE0058.severity = none      # Suppress unused expression value
+
+# Stretch goal — uncomment to promote to errors / enable extra rules:
+# dotnet_diagnostic.IDE0055.severity = error     # Formatting is now a build error
+# dotnet_diagnostic.IDE0060.severity = warning   # Unused parameter
