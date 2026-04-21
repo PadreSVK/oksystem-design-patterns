@@ -1,0 +1,38 @@
+<Project>
+
+  <PropertyGroup>
+    <!--
+      Step 1 complete — these settings apply to every project under hands-on/.
+      AnalysisMode=All  : enables all built-in .NET quality analyzers (CA rules).
+      Nullable=enable   : turns on nullable reference type analysis.
+    -->
+    <AnalysisMode>All</AnalysisMode>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+
+    <!--
+      Uncomment for CI strictness (stretch goal / step 7):
+      Fails the build on any analyzer warning when the CI environment variable is set.
+    -->
+    <!-- <TreatWarningsAsErrors Condition="'$(CI)' == 'true'">true</TreatWarningsAsErrors> -->
+  </PropertyGroup>
+
+  <!--
+    ============================================================
+    TODO Step 3 — Add StyleCop.Analyzers and Roslynator.Analyzers
+    Uncomment the ItemGroup below, then run: dotnet build
+    ============================================================
+   -->
+
+  <!-- <ItemGroup>
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Roslynator.Analyzers" Version="4.15.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup> -->
+
+</Project>

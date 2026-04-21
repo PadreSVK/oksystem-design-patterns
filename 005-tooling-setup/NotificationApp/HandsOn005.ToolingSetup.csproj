@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+
+  <!-- Exclude solution files — they conflict with the entry-point top-level statements -->
+  <ItemGroup>
+    <Compile Remove="*-Solution.cs" />
+  </ItemGroup>
+
+</Project>
