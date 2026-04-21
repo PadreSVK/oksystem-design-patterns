@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="HandsOn007.BuilderPrototypeSingleton/HandsOn007.BuilderPrototypeSingleton.csproj" />
+  <Project Path="HandsOn007.Tests/HandsOn007.Tests.csproj" />
+</Solution>
