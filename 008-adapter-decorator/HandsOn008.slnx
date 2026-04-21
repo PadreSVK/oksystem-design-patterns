@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="HandsOn008.AdapterDecorator/HandsOn008.AdapterDecorator.csproj" />
+  <Project Path="HandsOn008.Tests/HandsOn008.Tests.csproj" />
+</Solution>
