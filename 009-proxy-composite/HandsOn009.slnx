@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="HandsOn009.ProxyComposite/HandsOn009.ProxyComposite.csproj" />
+  <Project Path="HandsOn009.Tests/HandsOn009.Tests.csproj" />
+</Solution>
