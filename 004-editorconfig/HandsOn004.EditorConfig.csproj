@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <!-- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/overview?tabs=net-10#enable-on-build -->
   </PropertyGroup>
 
   <!-- Exclude solution files — they conflict with the entry-point top-level statements -->
