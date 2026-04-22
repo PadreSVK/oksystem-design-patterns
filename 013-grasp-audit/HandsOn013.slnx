@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="HandsOn013.GraspAudit/HandsOn013.GraspAudit.csproj" />
+  <Project Path="HandsOn013.Tests/HandsOn013.Tests.csproj" />
+</Solution>
