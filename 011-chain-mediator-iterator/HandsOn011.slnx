@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="HandsOn011.ChainMediatorIterator/HandsOn011.ChainMediatorIterator.csproj" />
+  <Project Path="HandsOn011.Tests/HandsOn011.Tests.csproj" />
+</Solution>
