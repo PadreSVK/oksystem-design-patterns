@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="HandsOn012.StateVisitor/HandsOn012.StateVisitor.csproj" />
+  <Project Path="HandsOn012.Tests/HandsOn012.Tests.csproj" />
+</Solution>
