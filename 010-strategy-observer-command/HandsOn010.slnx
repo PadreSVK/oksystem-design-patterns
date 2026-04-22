@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="HandsOn010.StrategyObserverCommand/HandsOn010.StrategyObserverCommand.csproj" />
+  <Project Path="HandsOn010.Tests/HandsOn010.Tests.csproj" />
+</Solution>
