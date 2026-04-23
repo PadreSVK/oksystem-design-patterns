@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="HandsOn014.MvcMvvm/HandsOn014.MvcMvvm.csproj" />
+  <Project Path="HandsOn014.Tests/HandsOn014.Tests.csproj" />
+</Solution>
