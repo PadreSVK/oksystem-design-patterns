@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="HandsOn019.OrderAggregate/HandsOn019.OrderAggregate.csproj" />
+  <Project Path="HandsOn019.Tests/HandsOn019.Tests.csproj" />
+</Solution>
