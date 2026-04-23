@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="HandsOn015.MasterSlavePubSub/HandsOn015.MasterSlavePubSub.csproj" />
+  <Project Path="HandsOn015.Tests/HandsOn015.Tests.csproj" />
+</Solution>
