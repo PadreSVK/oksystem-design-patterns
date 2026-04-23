@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="HandsOn020.Domain/HandsOn020.Domain.csproj" />
+  <Project Path="HandsOn020.Infrastructure/HandsOn020.Infrastructure.csproj" />
+  <Project Path="HandsOn020.Application/HandsOn020.Application.csproj" />
+  <Project Path="HandsOn020.Tests/HandsOn020.Tests.csproj" />
+</Solution>
