@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="OrderService.Domain/OrderService.Domain.csproj" />
+  <Project Path="OrderService.Application/OrderService.Application.csproj" />
+  <Project Path="OrderService.Infrastructure/OrderService.Infrastructure.csproj" />
+  <Project Path="HandsOn017.Tests/HandsOn017.Tests.csproj" />
+</Solution>
