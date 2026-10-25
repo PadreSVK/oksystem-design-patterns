@@ -1,0 +1,55 @@
+# ============================================================
+# Hands-On 004 — SOLUTION
+# ============================================================
+
+root = true
+
+[*]
+end_of_line = crlf
+insert_final_newline = true
+
+[*.cs]
+indent_style = space
+indent_size = 4
+charset = utf-8-bom
+trim_trailing_whitespace = true
+
+# -----------------------------------------------
+# Naming rule: private fields must use _camelCase
+# -----------------------------------------------
+dotnet_naming_rule.private_fields_rule.symbols  = private_fields
+dotnet_naming_rule.private_fields_rule.style    = underscore_camel_case
+dotnet_naming_rule.private_fields_rule.severity = warning
+
+dotnet_naming_symbols.private_fields.applicable_kinds           = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+
+dotnet_naming_style.underscore_camel_case.capitalization  = camel_case
+dotnet_naming_style.underscore_camel_case.required_prefix = _
+
+# -----------------------------------------------
+# Naming rule: constants must use PascalCase
+# -----------------------------------------------
+dotnet_naming_rule.constants_rule.symbols  = constants
+dotnet_naming_rule.constants_rule.style    = pascal_case_style
+dotnet_naming_rule.constants_rule.severity = warning
+
+dotnet_naming_symbols.constants.applicable_kinds           = field,local
+dotnet_naming_symbols.constants.applicable_accessibilities = *
+dotnet_naming_symbols.constants.required_modifiers         = const
+
+dotnet_naming_style.pascal_case_style.capitalization = pascal_case
+
+# -----------------------------------------------
+# Severity overrides
+# -----------------------------------------------
+dotnet_diagnostic.IDE0055.severity = warning   # Fix formatting
+dotnet_diagnostic.IDE0058.severity = none      # Suppress unused expression value
+
+# Stretch goal — uncomment to see extra diagnostics:
+# dotnet_diagnostic.IDE0055.severity = error     # Formatting is now a build error
+# dotnet_diagnostic.IDE0060.severity = warning   # Unused parameter
+
+# workaround as "codestyle" is not longer enforced in CLI dotne build
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/overview?tabs=net-10#enable-on-build
+dotnet_analyzer_diagnostic.category-Style.severity = warning
