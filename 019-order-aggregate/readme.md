@@ -30,7 +30,7 @@ Build a rich domain model using DDD tactical patterns: Value Objects, Aggregate 
 ## Running Tests
 
 ```bash
-cd hands-on/019-order-aggregate
+cd 019-order-aggregate
 dotnet test
 ```
 
