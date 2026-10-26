@@ -1,204 +1,136 @@
 // ============================================================
 // Hands-On 001 — Categorize Code Snippets — SOLUTION
+//
+// Each snippet is categorizable from the Pattern Classification
+// table alone. The "flag" answers rely only on general C#
+// experience — no pattern internals are required at this point
+// in the course.
 // ============================================================
 
 using System;
-using System.Collections.Generic;
 
 namespace HandsOn.CategorizeSnippets.Solution;
 
 // ============================================================
-// Snippet 1 — AuditLogger
+// Snippet 1 — PaymentFactory
 //
-// PATTERN   : Singleton (Creational)
-// CATEGORY  : Creational
-// ANTI-PATTERN: Non-thread-safe Singleton
-//   _instance is not volatile and there is no lock.
-//   Two threads can both pass the `is null` check simultaneously
-//   and create two instances, breaking the "exactly one" guarantee.
+// CATEGORY : Creational
+// DOING    : Centralizes the creation of IPaymentProcessor
+//            instances (a simple/static factory).
+// FLAG     : 1) Not open for extension — every new PaymentKind
+//               forces editing this switch (OCP smell).
+//            2) BankTransfer is a declared enum value but has no
+//               case, so Create(PaymentKind.BankTransfer) throws
+//               at runtime instead of being caught at compile time.
 //
-// FIX: Use Lazy<T> — lazy, thread-safe, no manual locking needed.
+// FIX: register processors by kind (e.g. a dictionary / DI) so a
+//      new kind is added without editing the factory, and make
+//      the missing case impossible or explicit.
 // ============================================================
 
-// ❌ Original — broken under concurrency
-public sealed class AuditLogger_Broken
+public enum PaymentKind { Card, PayPal, BankTransfer }
+
+public interface IPaymentProcessor
 {
-    private static AuditLogger_Broken? _instance;
-
-    private AuditLogger_Broken() { }
-
-    public static AuditLogger_Broken Instance
-    {
-        get
-        {
-            if (_instance is null)
-            {
-                _instance = new AuditLogger_Broken(); // ❌ race condition
-            }
-            return _instance;
-        }
-    }
-
-    public void Log(string message) =>
-        Console.WriteLine($"[AUDIT] {message}");
+    void Pay(decimal amount);
 }
 
-// ✅ Fixed — Lazy<T> guarantees single initialisation and thread safety
-public sealed class AuditLogger
+public class CardProcessor : IPaymentProcessor
 {
-    private static readonly Lazy<AuditLogger> _lazy =
-        new(() => new AuditLogger(), isThreadSafe: true);
-
-    private AuditLogger() { }
-
-    public static AuditLogger Instance => _lazy.Value;
-
-    public void Log(string message) =>
-        Console.WriteLine($"[AUDIT] {message}");
+    public void Pay(decimal amount) => Console.WriteLine($"[Card] {amount:C}");
 }
 
-// ============================================================
-// Snippet 2 — OrderEventSource / IOrderEventListener
-//
-// PATTERN   : Observer (Behavioral)
-// CATEGORY  : Behavioral
-// ANTI-PATTERN: Lapsed Listener / Memory Leak
-//   Subscribe() adds listeners but there is no Unsubscribe() or
-//   IDisposable return. Listeners are held forever, preventing GC.
-//   In long-lived subjects this leaks memory and causes stale
-//   objects to receive notifications.
-//
-// FIX: Return an IDisposable subscription token from Subscribe()
-//      so callers can unsubscribe deterministically.
-// ============================================================
-
-public interface IOrderEventListener
+public class PayPalProcessor : IPaymentProcessor
 {
-    void OnOrderPlaced(string orderId);
+    public void Pay(decimal amount) => Console.WriteLine($"[PayPal] {amount:C}");
 }
 
-// ❌ Original — no unsubscribe path
-public class OrderEventSource_Broken
+public class BankTransferProcessor : IPaymentProcessor
 {
-    private readonly List<IOrderEventListener> _listeners = new();
-
-    public void Subscribe(IOrderEventListener listener) =>
-        _listeners.Add(listener); // ❌ no way to remove
-
-    public void PlaceOrder(string orderId)
-    {
-        Console.WriteLine($"Order {orderId} placed.");
-        foreach (var listener in _listeners)
-            listener.OnOrderPlaced(orderId);
-    }
+    public void Pay(decimal amount) => Console.WriteLine($"[BankTransfer] {amount:C}");
 }
 
-// ✅ Fixed — subscription token returned; caller disposes to unsubscribe
-public class OrderEventSource
+// ✅ Extensible — add a kind by registering it, not by editing a switch
+public static class PaymentFactory
 {
-    private readonly List<IOrderEventListener> _listeners = new();
-
-    public IDisposable Subscribe(IOrderEventListener listener)
+    private static readonly System.Collections.Generic.Dictionary<PaymentKind, Func<IPaymentProcessor>> _registry = new()
     {
-        _listeners.Add(listener);
-        return new Subscription(() => _listeners.Remove(listener));
-    }
+        [PaymentKind.Card]         = () => new CardProcessor(),
+        [PaymentKind.PayPal]       = () => new PayPalProcessor(),
+        [PaymentKind.BankTransfer] = () => new BankTransferProcessor(),
+    };
 
-    public void PlaceOrder(string orderId)
-    {
-        Console.WriteLine($"Order {orderId} placed.");
-        foreach (var listener in new List<IOrderEventListener>(_listeners))
-            listener.OnOrderPlaced(orderId);
-    }
-
-    private sealed class Subscription(Action onDispose) : IDisposable
-    {
-        public void Dispose() => onDispose();
-    }
-}
-
-public class EmailConfirmationService : IOrderEventListener
-{
-    public void OnOrderPlaced(string orderId) =>
-        Console.WriteLine($"[EMAIL] Confirmation sent for order {orderId}");
+    public static IPaymentProcessor Create(PaymentKind kind) =>
+        _registry.TryGetValue(kind, out var factory)
+            ? factory()
+            : throw new NotSupportedException($"No processor for {kind}");
 }
 
 // ============================================================
-// Snippet 3 — ReportContext in a using block
+// Snippet 2 — XmlExportAdapter
 //
-// PATTERN   : using + IDisposable idiom (attempted)
-// CATEGORY  : Idiom
-// ANTI-PATTERN: using on a non-IDisposable type via dynamic
-//   ReportContext does not implement IDisposable.
-//   Casting to dynamic silences the compiler, but at runtime
-//   the using block emits a Dispose() call that does not exist,
-//   throwing RuntimeBinderException at the closing brace.
-//   The class signals deterministic cleanup without honouring
-//   the contract.
+// CATEGORY : Structural
+// DOING    : Adapts the third-party LegacyXmlExporter to the
+//            app's IReportExporter interface (Adapter).
+// FLAG     : The `Inner` property leaks the wrapped library to
+//            callers. The whole point of an adapter is to isolate
+//            the rest of the code from the adaptee; exposing it
+//            lets callers bind to LegacyXmlExporter again, undoing
+//            the isolation.
 //
-// FIX: Implement IDisposable properly on ReportContext, or
-//      remove the using block if no cleanup is needed.
+// FIX: drop `Inner`; keep the adaptee private behind the interface.
 // ============================================================
 
-// ❌ Original — does not implement IDisposable; dynamic cast hides the error
-public class ReportContext_Broken
+public sealed class LegacyXmlExporter
 {
-    private readonly string _reportName;
-
-    public ReportContext_Broken(string reportName)
-    {
-        _reportName = reportName;
-        Console.WriteLine($"[ReportContext] Opening context for '{_reportName}'");
-    }
-
-    public void Generate() =>
-        Console.WriteLine($"[ReportContext] Generating report '{_reportName}'");
+    public string ExportToXml(string data) => $"<xml>{data}</xml>";
 }
 
-public class ReportRunner_Broken
+public interface IReportExporter
 {
-    public void Run()
-    {
-        // ❌ RuntimeBinderException at runtime — Dispose() does not exist
-        using (var ctx = (dynamic)new ReportContext_Broken("Monthly Sales"))
-        {
-            ctx.Generate();
-        }
-    }
+    string Export(string data);
 }
 
-// ✅ Fixed — implements IDisposable; using block works correctly
-public class ReportContext : IDisposable
+// ✅ Isolates the adaptee — nothing leaks
+public class XmlExportAdapter : IReportExporter
 {
-    private readonly string _reportName;
-    private bool _disposed;
+    private readonly LegacyXmlExporter _legacy = new();
 
-    public ReportContext(string reportName)
-    {
-        _reportName = reportName;
-        Console.WriteLine($"[ReportContext] Opening context for '{_reportName}'");
-    }
-
-    public void Generate()
-    {
-        ObjectDisposedException.ThrowIf(_disposed, this);
-        Console.WriteLine($"[ReportContext] Generating report '{_reportName}'");
-    }
-
-    public void Dispose()
-    {
-        if (_disposed) return;
-        _disposed = true;
-        Console.WriteLine($"[ReportContext] Closing context for '{_reportName}'");
-    }
+    public string Export(string data) => _legacy.ExportToXml(data);
 }
 
-public class ReportRunner
+// ============================================================
+// Snippet 3 — ShippingCalculator  (the subtle one)
+//
+// CATEGORY : Behavioral
+// DOING    : Selects a pricing algorithm at runtime based on the
+//            `speed` argument (the intent of Strategy).
+// FLAG     : Two issues.
+//            1) Design: algorithm selection is an if/else chain,
+//               not polymorphism — every new ShippingSpeed edits
+//               this method (conditional-complexity smell).
+//            2) Correctness (subtle): the final `else` is a catch-
+//               all. An unrecognized speed silently returns the
+//               base rate (weight * 1.0) — the system undercharges
+//               instead of failing. With an enum this looks safe,
+//               but a cast/overflow value or a newly added member
+//               slips straight into the wrong branch.
+//
+// FIX: make each speed its own rule (Strategy), or at minimum use
+//      an exhaustive switch expression that throws on an unknown
+//      value so the gap is loud, not silent.
+// ============================================================
+
+public enum ShippingSpeed { Standard, Express, Overnight }
+
+// ✅ Exhaustive + loud on unknown input
+public class ShippingCalculator
 {
-    public void Run()
+    public decimal Calculate(ShippingSpeed speed, decimal weightKg) => speed switch
     {
-        using var ctx = new ReportContext("Monthly Sales"); // ✅ Dispose() guaranteed
-        ctx.Generate();
-    }
+        ShippingSpeed.Standard  => weightKg * 1.0m,
+        ShippingSpeed.Express   => weightKg * 2.5m,
+        ShippingSpeed.Overnight => weightKg * 4.0m,
+        _ => throw new ArgumentOutOfRangeException(nameof(speed), speed, "Unknown shipping speed")
+    };
 }
- 
