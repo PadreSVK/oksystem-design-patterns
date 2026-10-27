@@ -481,3 +481,7 @@
 481:# Vim temporary swap files
 482:*.swp
 483:
+
+# Build output
+[Bb]in/
+[Oo]bj/

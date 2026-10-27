@@ -44,7 +44,7 @@ Implement `ResultLoggingBehavior<TRequest, TResponse> : IPipelineBehavior` that:
 ## Running Tests
 
 ```bash
-cd hands-on/018-result-pattern
+cd 018-result-pattern
 dotnet test
 ```
 

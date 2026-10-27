@@ -48,7 +48,7 @@ Build a four-layer Clean Architecture solution and verify that the **Dependency 
 ## Running Tests
 
 ```bash
-cd hands-on/017-clean-architecture
+cd 017-clean-architecture
 dotnet test
 ```
 
