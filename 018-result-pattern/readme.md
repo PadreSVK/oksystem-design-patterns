@@ -1,11 +1,11 @@
 # Hands-On 018 — Replace Exceptions with Result\<T\>
 
-This lab teaches you to replace exception-based error handling with the **Result pattern** using the [FluentResults](https://github.com/altmann/FluentResults) library. You will refactor command handlers, chain fallible operations with `Bind`, and build a MediatR pipeline behavior that logs failures — all without a single `try/catch`.
+This lab teaches you to replace exception-based error handling with the **Result pattern** using the [FluentResults](https://github.com/altmann/FluentResults) library. You will refactor command handlers, chain fallible operations with `Bind`, and build a [Mediator](https://github.com/martinothamar/Mediator) pipeline behavior that logs failures — all without a single `try/catch`.
 
 ## Prerequisites
 
 - .NET 8 SDK
-- Familiarity with MediatR basics (from Hands-On 015)
+- Familiarity with Mediator basics (from Hands-On 015)
 
 ## Tasks
 
@@ -33,18 +33,18 @@ ValidateCommand → CheckInventory → CreateOrder
 2. Chain them: `ValidateCommand(cmd).Bind(ctx => CheckInventory(ctx)).Bind(ctx => CreateOrder(ctx))`.
 3. `Execute` should return `Result<Guid>` — the pipeline short-circuits on first failure.
 
-### Task 3 — MediatR Pipeline Behavior (`Task3-PipelineBehavior.cs`)
+### Task 3 — Mediator Pipeline Behavior (`Task3-PipelineBehavior.cs`)
 
 Implement `ResultLoggingBehavior<TRequest, TResponse> : IPipelineBehavior` that:
 
-1. Constrains `TResponse : ResultBase`.
-2. Calls `next()` to get the response.
+1. Constrains `TRequest : notnull, IMessage` and `TResponse : ResultBase`.
+2. Calls `next(request, cancellationToken)` to get the response.
 3. If `response.IsFailed`, logs a warning: `"Request {RequestName} failed: {Errors}"`.
 
 ## Running Tests
 
 ```bash
-cd 018-result-pattern
+cd hands-on/018-result-pattern
 dotnet test
 ```
 

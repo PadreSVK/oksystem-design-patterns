@@ -1,6 +1,6 @@
 using HandsOn021.Application;
 using HandsOn021.Domain;
-using MediatR;
+using Mediator;
 using Xunit;
 
 namespace HandsOn021.Tests;
@@ -32,18 +32,18 @@ public class PlaceOrderHandlerTests
     {
         public List<INotification> Published { get; } = [];
 
-        public Task Publish(object notification, CancellationToken ct = default)
+        public ValueTask Publish(object notification, CancellationToken ct = default)
         {
             if (notification is INotification n)
                 Published.Add(n);
-            return Task.CompletedTask;
+            return ValueTask.CompletedTask;
         }
 
-        public Task Publish<TNotification>(TNotification notification, CancellationToken ct = default)
+        public ValueTask Publish<TNotification>(TNotification notification, CancellationToken ct = default)
             where TNotification : INotification
         {
             Published.Add(notification);
-            return Task.CompletedTask;
+            return ValueTask.CompletedTask;
         }
     }
 

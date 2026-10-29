@@ -1,5 +1,5 @@
 using Xunit;
-using MediatR;
+using Mediator;
 using Microsoft.Extensions.DependencyInjection;
 using HandsOn.MasterSlavePubSub;
 
@@ -52,8 +52,7 @@ public class PubSubTests
         var stock = new SpyStockService();
 
         var services = new ServiceCollection();
-        services.AddMediatR(cfg =>
-            cfg.RegisterServicesFromAssembly(typeof(OrderService).Assembly));
+        services.AddMediator();
         services.AddSingleton<IOrderGateway>(gateway);
         services.AddSingleton<IInvoiceService>(invoice);
         services.AddSingleton<IStockService>(stock);

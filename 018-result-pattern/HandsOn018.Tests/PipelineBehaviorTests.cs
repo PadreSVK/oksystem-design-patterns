@@ -1,6 +1,6 @@
 using FluentResults;
 using HandsOn018.ResultPattern;
-using MediatR;
+using Mediator;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Xunit;
@@ -14,11 +14,8 @@ public class PipelineBehaviorTests
         var services = new ServiceCollection();
 
         services.AddLogging(b => b.AddProvider(new InMemoryLoggerProvider(LogStore)));
-        services.AddMediatR(cfg =>
-        {
-            cfg.RegisterServicesFromAssemblyContaining<PlaceOrderMediatRHandler>();
-            cfg.AddOpenBehavior(typeof(ResultLoggingBehavior<,>));
-        });
+        services.AddMediator();
+        services.AddSingleton(typeof(IPipelineBehavior<,>), typeof(ResultLoggingBehavior<,>));
 
         var provider = services.BuildServiceProvider();
         return provider.GetRequiredService<IMediator>();
@@ -30,7 +27,7 @@ public class PipelineBehaviorTests
     public async Task SuccessfulRequest_NoWarningLogged()
     {
         var mediator = BuildMediator();
-        var command = new PlaceOrderMediatRCommand("CUST-1",
+        var command = new PlaceOrderMediatorCommand("CUST-1",
         [
             new OrderItemDto("PROD-A", 1, 10.00m)
         ]);
@@ -45,20 +42,20 @@ public class PipelineBehaviorTests
     public async Task FailedRequest_WarningIsLogged()
     {
         var mediator = BuildMediator();
-        var command = new PlaceOrderMediatRCommand("CUST-1", []);
+        var command = new PlaceOrderMediatorCommand("CUST-1", []);
 
         var result = await mediator.Send(command);
 
         Assert.True(result.IsFailed);
         Assert.Contains(LogStore, msg =>
-            msg.Contains("PlaceOrderMediatRCommand") && msg.Contains("failed"));
+            msg.Contains("PlaceOrderMediatorCommand") && msg.Contains("failed"));
     }
 
     [Fact]
     public async Task FailedRequest_ErrorMessageInLog()
     {
         var mediator = BuildMediator();
-        var command = new PlaceOrderMediatRCommand("CUST-1", []);
+        var command = new PlaceOrderMediatorCommand("CUST-1", []);
 
         await mediator.Send(command);
 
