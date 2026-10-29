@@ -1,5 +1,5 @@
 using HandsOn021.Application;
-using MediatR;
+using Mediator;
 using Microsoft.Extensions.Logging;
 using Xunit;
 
@@ -29,7 +29,7 @@ public class LoggingBehaviorTests
 
         var result = await behavior.Handle(
             new PlaceOrderCommand("CUST-1", [new OrderItemDto("Widget", 1, 5.00m)]),
-            () => Task.FromResult(Result<Guid>.Ok(Guid.NewGuid())),
+            (_, _) => ValueTask.FromResult(Result<Guid>.Ok(Guid.NewGuid())),
             CancellationToken.None);
 
         Assert.True(result.IsSuccess);
@@ -51,10 +51,10 @@ public class LoggingBehaviorTests
 
         await behavior.Handle(
             new GetOrderSummaryQuery(Guid.NewGuid()),
-            () =>
+            (_, _) =>
             {
                 nextCalled = true;
-                return Task.FromResult(Result<OrderSummaryDto>.Ok(dto));
+                return ValueTask.FromResult(Result<OrderSummaryDto>.Ok(dto));
             },
             CancellationToken.None);
 

@@ -1,5 +1,5 @@
 using HandsOn021.Domain;
-using MediatR;
+using Mediator;
 
 namespace HandsOn021.Application;
 
@@ -10,7 +10,7 @@ namespace HandsOn021.Application;
 public class PlaceOrderHandler(IOrderRepository repository, IPublisher publisher)
     : IRequestHandler<PlaceOrderCommand, Result<Guid>>
 {
-    public async Task<Result<Guid>> Handle(
+    public async ValueTask<Result<Guid>> Handle(
         PlaceOrderCommand command, CancellationToken ct)
     {
         var items = command.Items

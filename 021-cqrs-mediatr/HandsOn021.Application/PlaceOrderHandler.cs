@@ -1,5 +1,5 @@
 using HandsOn021.Domain;
-using MediatR;
+using Mediator;
 
 namespace HandsOn021.Application;
 
@@ -24,11 +24,11 @@ namespace HandsOn021.Application;
 //      e. Return Result<Guid>.Ok(order.Id)
 //
 // KEY INSIGHT: The command handler uses IOrderRepository (Domain interface)
-//              and IPublisher (MediatR) — no EF Core references here.
+//              and IPublisher (Mediator) — no EF Core references here.
 //              The published notification will be handled by the projector
 //              to update the read model.
 //
-// HINT: See the slide "CQRS — MediatR Command Handler (PlaceOrder)"
+// HINT: See the slide "CQRS — Mediator Command Handler (PlaceOrder)"
 // =============================================================================
 
 public class PlaceOrderHandler

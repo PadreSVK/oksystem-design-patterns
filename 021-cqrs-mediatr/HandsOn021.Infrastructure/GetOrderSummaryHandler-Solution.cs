@@ -1,5 +1,5 @@
 using HandsOn021.Application;
-using MediatR;
+using Mediator;
 using Microsoft.EntityFrameworkCore;
 
 namespace HandsOn021.Infrastructure;
@@ -11,7 +11,7 @@ namespace HandsOn021.Infrastructure;
 public class GetOrderSummaryHandler(AppDbContext db)
     : IRequestHandler<GetOrderSummaryQuery, Result<OrderSummaryDto>>
 {
-    public async Task<Result<OrderSummaryDto>> Handle(
+    public async ValueTask<Result<OrderSummaryDto>> Handle(
         GetOrderSummaryQuery query, CancellationToken ct)
     {
         var dto = await db.OrderSummaryViews

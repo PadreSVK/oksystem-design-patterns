@@ -1,25 +1,25 @@
 using FluentResults;
-using MediatR;
+using Mediator;
 using Microsoft.Extensions.Logging;
 
 namespace HandsOn018.ResultPattern;
 
 // =============================================================================
-// Task 3 Solution — MediatR Pipeline Behavior for Result Logging
+// Task 3 Solution — Mediator Pipeline Behavior for Result Logging
 // =============================================================================
 
 public class ResultLoggingBehavior<TRequest, TResponse>(
     ILogger<ResultLoggingBehavior<TRequest, TResponse>> logger)
     : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : notnull
+    where TRequest : notnull, IMessage
     where TResponse : ResultBase
 {
-    public async Task<TResponse> Handle(
+    public async ValueTask<TResponse> Handle(
         TRequest request,
-        RequestHandlerDelegate<TResponse> next,
+        MessageHandlerDelegate<TRequest, TResponse> next,
         CancellationToken cancellationToken)
     {
-        var response = await next();
+        var response = await next(request, cancellationToken);
 
         if (response.IsFailed)
         {

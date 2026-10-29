@@ -1,4 +1,4 @@
-using MediatR;
+using Mediator;
 
 namespace HandsOn021.Application;
 
@@ -29,7 +29,7 @@ public record PlaceOrderCommand(
     string CustomerId,
     IReadOnlyList<OrderItemDto> Items) : IRequest<Result<Guid>>;
 
-// --- Notification (domain event published via MediatR) ---
+// --- Notification (domain event published via Mediator) ---
 
 public record OrderPlacedNotification(
     Guid OrderId,

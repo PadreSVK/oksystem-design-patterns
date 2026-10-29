@@ -1,4 +1,4 @@
-using MediatR;
+using Mediator;
 
 namespace HandsOn.MasterSlavePubSub;
 
@@ -55,7 +55,7 @@ public class InvoiceHandler : INotificationHandler<OrderPlacedNotification>
         _invoiceService = invoiceService;
     }
 
-    public async Task Handle(OrderPlacedNotification notification, CancellationToken ct)
+    public async ValueTask Handle(OrderPlacedNotification notification, CancellationToken ct)
     {
         await _invoiceService.GenerateAsync(notification.OrderId, notification.CustomerId, ct);
     }
@@ -72,7 +72,7 @@ public class StockReservationHandler : INotificationHandler<OrderPlacedNotificat
         _stockService = stockService;
     }
 
-    public async Task Handle(OrderPlacedNotification notification, CancellationToken ct)
+    public async ValueTask Handle(OrderPlacedNotification notification, CancellationToken ct)
     {
         await _stockService.ReserveAsync(notification.OrderId, ct);
     }

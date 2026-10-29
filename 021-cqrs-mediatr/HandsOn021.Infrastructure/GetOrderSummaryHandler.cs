@@ -1,5 +1,5 @@
 using HandsOn021.Application;
-using MediatR;
+using Mediator;
 using Microsoft.EntityFrameworkCore;
 
 namespace HandsOn021.Infrastructure;
@@ -26,7 +26,7 @@ namespace HandsOn021.Infrastructure;
 //              pragmatic approach for the read side of CQRS. No repository
 //              abstraction needed for simple projections.
 //
-// HINT: See the slide "CQRS — MediatR Query Handler (GetOrderSummary)"
+// HINT: See the slide "CQRS — Mediator Query Handler (GetOrderSummary)"
 // =============================================================================
 
 public class GetOrderSummaryHandler

@@ -1,5 +1,5 @@
 using HandsOn021.Application;
-using MediatR;
+using Mediator;
 
 namespace HandsOn021.Infrastructure;
 
@@ -7,14 +7,14 @@ namespace HandsOn021.Infrastructure;
 // OrderPlacedProjector — Shared (always compiled)
 // =============================================================================
 //
-// The Projector listens for domain events (published via MediatR as
+// The Projector listens for domain events (published via Mediator as
 // INotification) and updates the denormalized read model.
 // =============================================================================
 
 public class OrderPlacedProjector(AppDbContext db)
     : INotificationHandler<OrderPlacedNotification>
 {
-    public async Task Handle(OrderPlacedNotification notification, CancellationToken ct)
+    public async ValueTask Handle(OrderPlacedNotification notification, CancellationToken ct)
     {
         var summary = new OrderSummaryView
         {
